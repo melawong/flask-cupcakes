@@ -12,6 +12,8 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 connect_db(app)
 
+# ================== API routes ===========================
+
 @app.get('/api/cupcakes')
 def get_all_cupcakes():
     """Get data about all cupcakes.
@@ -86,10 +88,19 @@ def update_cupcake(cupcake_id):
 def delete_cupcake(cupcake_id):
     """Delete cupcake with the id passed in the URL. Respond with JSON like
     {deleted: [cupcake-id]}."""
-    
+
     cupcake = Cupcake.query.get_or_404(cupcake_id)
 
     db.session.delete(cupcake)
     db.session.commit()
 
     return jsonify({"deleted": cupcake_id})
+
+
+# =================== HTML routes ==========================
+
+@app.get('/')
+def show_homepage():
+
+    return render_template("index.html")
+

@@ -1,0 +1,21 @@
+{% extends 'base.html' %} {% block content %}
+
+<h1>Cupcakes</h1>
+<ul class="list-group mb-3 cupcakes-list">
+</ul>
+
+<form action="/api/cupcakes" method="post" id="add-cupcake-form">
+  <label for="flavor">Flavor</label>
+  <input type="text" name="flavor" id="flavor">
+  <label for="size">Size</label>
+  <input type="text" name="size" id="size">
+  <label for="rating">Rating</label>
+  <input type="number" name="rating" id="rating">
+  <label for="image">Image URL</label>
+  <input type="text" name="image" id="image">
+  <button type="submit" class="btn btn-primary">Add new cupcake!</button>
+</form>
+
+
+{% endblock %}
+
