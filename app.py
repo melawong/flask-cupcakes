@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, redirect, request, flash, jsonify
 
-from models import db, connect_db, Cupcake
+from models import DEFAULT_IMAGE_URL, db, connect_db, Cupcake
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "oh-so-secret"
@@ -56,3 +56,40 @@ def create_cupcake():
     serialized = new_cupcake.serialize()
 
     return (jsonify(cupcake=serialized),201)
+
+
+@app.patch('/api/cupcakes/<int:cupcake_id>')
+def update_cupcake(cupcake_id):
+    """Update a cupcake using the id passed in the URL and the cupcake data
+    passed in the body of the request. The request body may include flavor,
+    size, rating and image data but not all fields are required."""
+
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    cupcake.id = cupcake.id
+    cupcake.flavor = request.json.get("flavor") or cupcake.flavor
+    cupcake.size = request.json.get("size") or cupcake.size
+    cupcake.rating = request.json.get("rating") or cupcake.rating
+
+    if request.json.get("image") == "":
+        cupcake.image = DEFAULT_IMAGE_URL
+    else:
+        cupcake.image = request.json.get("image") or cupcake.image
+
+    db.session.commit()
+
+    serialized = cupcake.serialize()
+
+    return jsonify(cupcake=serialized)
+
+
+@app.delete('/api/cupcakes/<int:cupcake_id>')
+def delete_cupcake(cupcake_id):
+    """Delete cupcake with the id passed in the URL. Respond with JSON like
+    {deleted: [cupcake-id]}."""
+    
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+
+    db.session.delete(cupcake)
+    db.session.commit()
+
+    return jsonify({"deleted": cupcake_id})
